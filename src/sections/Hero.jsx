@@ -12,9 +12,9 @@ const Hero = () => {
 
     // Mouse move effect for 3D card
     const cardRef = useRef(null);
-    const useMouseParallax = (stiffness = 300, damping = 30) => {
-        const x = useSpring(0, { stiffness, damping });
-        const y = useSpring(0, { stiffness, damping });
+    const useMouseParallax = (stiffness = 150, damping = 20) => {
+        const x = useSpring(0, { stiffness, damping, mass: 1.2 });
+        const y = useSpring(0, { stiffness, damping, mass: 1.2 });
 
         const handleMouseMove = (e) => {
             const rect = cardRef.current?.getBoundingClientRect();
@@ -57,7 +57,7 @@ const Hero = () => {
                         rotate: [0, 10, 0],
                     }}
                     transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] bg-gradient-to-r from-brand-neon/20 via-color-neon-purple/20 to-transparent rounded-full blur-[120px] mix-blend-screen"
+                    className="absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] bg-gradient-to-r from-brand-neon/20 via-color-neon-purple/20 to-transparent rounded-full blur-[120px] mix-blend-screen will-change-transform"
                 />
                 <motion.div
                     animate={{
@@ -66,7 +66,7 @@ const Hero = () => {
                         rotate: [0, -15, 0],
                     }}
                     transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-gradient-to-l from-color-hot-pink/15 via-color-cyber-blue/15 to-transparent rounded-full blur-[120px] mix-blend-screen"
+                    className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-gradient-to-l from-color-hot-pink/15 via-color-cyber-blue/15 to-transparent rounded-full blur-[120px] mix-blend-screen will-change-transform"
                 />
                 <motion.div
                     animate={{
@@ -74,7 +74,7 @@ const Hero = () => {
                         y: [-20, 20, -20],
                     }}
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute top-[30%] left-[20%] w-[40vw] h-[40vw] bg-color-acid-lime/5 rounded-full blur-[100px] mix-blend-screen"
+                    className="absolute top-[30%] left-[20%] w-[40vw] h-[40vw] bg-color-acid-lime/5 rounded-full blur-[100px] mix-blend-screen will-change-transform"
                 />
 
                 {/* Grid */}
@@ -92,13 +92,13 @@ const Hero = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} // Custom cubic-bezier for fluid feel
                     className="max-w-3xl"
                 >
                     <motion.div
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: "auto" }}
-                        transition={{ delay: 0.2, duration: 0.5 }}
+                        transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium mb-8 backdrop-blur-md overflow-hidden whitespace-nowrap"
                     >
                         <span className="relative flex h-2 w-2">
@@ -125,13 +125,13 @@ const Hero = () => {
                     <div className="flex flex-wrap gap-4">
                         <Button
                             variant="primary"
-                            className="h-14 px-10 text-lg shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)] hover:shadow-[0_0_60px_-15px_rgba(59,130,246,0.7)] group relative overflow-hidden"
+                            className="h-14 px-10 text-lg shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)] hover:shadow-[0_0_60px_-15px_rgba(59,130,246,0.7)] group relative overflow-hidden transition-transform active:scale-95"
                         >
                             <span className="relative z-10">Start Building</span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-brand-neon to-color-neon-purple opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-brand-neon to-color-neon-purple opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out" />
                         </Button>
 
-                        <button className="h-14 px-10 rounded-xl border border-white/10 hover:bg-white/5 transition-all text-white font-medium flex items-center gap-3 group">
+                        <button className="h-14 px-10 rounded-xl border border-white/10 hover:bg-white/5 transition-all text-white font-medium flex items-center gap-3 group active:scale-95">
                             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
                                 <Play size={14} className="fill-white" />
                             </div>
@@ -140,18 +140,21 @@ const Hero = () => {
                     </div>
 
                     <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-8 border-t border-white/5 pt-8">
-                        <div>
-                            <h4 className="text-3xl font-bold text-white mb-1">98%</h4>
-                            <p className="text-sm text-gray-500 uppercase tracking-wider">Client Satisfaction</p>
-                        </div>
-                        <div>
-                            <h4 className="text-3xl font-bold text-white mb-1">50+</h4>
-                            <p className="text-sm text-gray-500 uppercase tracking-wider">Projects Launched</p>
-                        </div>
-                        <div className="hidden md:block">
-                            <h4 className="text-3xl font-bold text-white mb-1">24/7</h4>
-                            <p className="text-sm text-gray-500 uppercase tracking-wider">Expert Support</p>
-                        </div>
+                        {['Client Satisfaction', 'Projects Launched', 'Expert Support'].map((label, i) => (
+                            <motion.div
+                                key={label}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 + i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            >
+                                <h4 className="text-3xl font-bold text-white mb-1">
+                                    {i === 0 && '98%'}
+                                    {i === 1 && '50+'}
+                                    {i === 2 && '24/7'}
+                                </h4>
+                                <p className="text-sm text-gray-500 uppercase tracking-wider">{label}</p>
+                            </motion.div>
+                        ))}
                     </div>
                 </motion.div>
 
@@ -159,7 +162,7 @@ const Hero = () => {
                 <div className="relative h-[600px] perspective-1000 hidden lg:block" ref={cardRef}>
                     <motion.div
                         style={{ y: y1, rotateX, rotateY }}
-                        className="relative w-full h-full transform-style-3d will-change-transform transition-transform duration-100 ease-out"
+                        className="relative w-full h-full transform-style-3d will-change-transform transition-transform duration-200 ease-out"
                     >
                         {/* Main Holographic Card */}
                         <div className="absolute top-[10%] left-[10%] right-[10%] aspect-[16/10] bg-[#0A0A0A]/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden group">
@@ -217,7 +220,7 @@ const Hero = () => {
                         <motion.div
                             animate={{ y: [0, 40, 0], x: [0, 10, 0], rotate: [0, 10, 0] }}
                             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                            className="absolute -right-4 top-[20%] p-5 bg-[#1a1a1a]/80 backdrop-blur-xl border border-brand-neon/30 rounded-2xl shadow-[0_0_30px_rgba(59,130,246,0.3)] transform-style-3d"
+                            className="absolute -right-4 top-[20%] p-5 bg-[#1a1a1a]/80 backdrop-blur-xl border border-brand-neon/30 rounded-2xl shadow-[0_0_30px_rgba(59,130,246,0.3)] transform-style-3d will-change-transform"
                         >
                             <Sparkles className="text-brand-neon w-10 h-10 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
                         </motion.div>
@@ -225,7 +228,7 @@ const Hero = () => {
                         <motion.div
                             animate={{ y: [0, -30, 0], x: [0, -10, 0], rotate: [0, -5, 0] }}
                             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                            className="absolute -left-6 bottom-[25%] p-5 bg-[#1a1a1a]/80 backdrop-blur-xl border border-color-neon-purple/30 rounded-2xl shadow-[0_0_30px_rgba(124,58,237,0.3)] transform-style-3d"
+                            className="absolute -left-6 bottom-[25%] p-5 bg-[#1a1a1a]/80 backdrop-blur-xl border border-color-neon-purple/30 rounded-2xl shadow-[0_0_30px_rgba(124,58,237,0.3)] transform-style-3d will-change-transform"
                         >
                             <Zap className="text-color-neon-purple w-10 h-10 drop-shadow-[0_0_10px_rgba(124,58,237,0.8)]" />
                         </motion.div>
@@ -233,7 +236,7 @@ const Hero = () => {
                         <motion.div
                             animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute -z-10 top-1/2 left-1/2 w-[120%] h-[120%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-brand-neon/10 to-color-neon-purple/10 blur-[80px] rounded-full"
+                            className="absolute -z-10 top-1/2 left-1/2 w-[120%] h-[120%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-brand-neon/10 to-color-neon-purple/10 blur-[80px] rounded-full will-change-transform"
                         />
                     </motion.div>
                 </div>
@@ -242,7 +245,7 @@ const Hero = () => {
             {/* Scrolling Text */}
             <motion.div
                 style={{ opacity, y: y2 }}
-                className="absolute bottom-0 w-full pb-8 z-10 pointer-events-none"
+                className="absolute bottom-0 w-full pb-8 z-10 pointer-events-none select-none"
             >
                 <ParallaxText baseVelocity={-2}>INNOVATION • PERFORMANCE • SECURITY • SCALABILITY •</ParallaxText>
             </motion.div>
