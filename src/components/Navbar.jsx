@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
-
+import { Menu, X, ChevronRight } from 'lucide-react';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -36,23 +35,37 @@ const Navbar = () => {
         { name: 'Contact', path: '#contact' },
     ];
 
+    const scrollToSection = (e, path) => {
+        e.preventDefault();
+        const element = document.querySelector(path);
+        if (element) {
+            // lenient scroll for header offset if needed, or just let lenis handle it
+            element.scrollIntoView({ behavior: 'smooth' });
+            setIsOpen(false);
+        }
+    };
+
     return (
-        <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'glass bg-brand-900/80' : 'bg-transparent'}`}>
-            <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <nav
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 border-b ${scrolled
+                    ? 'bg-brand-900/80 backdrop-blur-xl border-white/5 py-4'
+                    : 'bg-transparent border-transparent py-6'
+                }`}
+        >
+            <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                 <a
-                    href="#"
-                    className="text-2xl font-bold bg-gradient-to-r from-brand-neon to-brand-purple bg-clip-text text-transparent cursor-none"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
+                    href="#home"
+                    onClick={(e) => scrollToSection(e, '#home')}
+                    className="relative group z-50"
                 >
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                    >
-                        Innoviware
-                    </motion.div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-neon to-brand-purple flex items-center justify-center text-white font-bold text-xl font-display shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                            I
+                        </div>
+                        <span className="text-2xl font-bold text-white tracking-tight font-display">
+                            Innoviware<span className="text-brand-neon">.</span>
+                        </span>
+                    </div>
                 </a>
 
                 {/* Desktop Menu */}
@@ -61,72 +74,76 @@ const Navbar = () => {
                         <a
                             key={link.name}
                             href={link.path}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                document.querySelector(link.path).scrollIntoView({
-                                    behavior: 'smooth'
-                                });
-                            }}
+                            onClick={(e) => scrollToSection(e, link.path)}
+                            className="relative group py-2"
                         >
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className={`relative text-gray-300 hover:text-brand-neon transition-colors group py-2 ${activeSection === link.path.substring(1) ? 'text-brand-neon' : ''}`}
-                            >
+                            <span className={`relative z-10 text-sm font-medium transition-colors duration-300 ${activeSection === link.path.substring(1) ? 'text-white' : 'text-gray-400 group-hover:text-white'
+                                }`}>
                                 {link.name}
-                                <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-brand-neon transform transition-transform duration-300 origin-left ${activeSection === link.path.substring(1) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
-                            </motion.div>
+                            </span>
+                            {activeSection === link.path.substring(1) && (
+                                <motion.div
+                                    layoutId="activeTab"
+                                    className="absolute inset-0 -z-10 bg-white/5 rounded-lg -m-2 opacity-100" // active background
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-brand-neon transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100"></span>
                         </a>
                     ))}
+
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="px-5 py-2 rounded-full bg-brand-neon/20 border border-brand-neon/50 text-brand-neon hover:bg-brand-neon hover:text-white transition-all shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:shadow-[0_0_25px_rgba(59,130,246,0.8)]"
+                        className="group relative px-6 py-2.5 bg-white text-brand-900 font-semibold rounded-full overflow-hidden transition-all hover:bg-brand-neon hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)]"
                     >
-                        Get Started
+                        <span className="relative z-10 flex items-center gap-2">
+                            Start Project <ChevronRight size={16} />
+                        </span>
                     </motion.button>
                 </div>
 
                 {/* Mobile Toggle */}
                 <button
-                    className="md:hidden text-gray-300 hover:text-white"
+                    className="md:hidden text-white relative z-50 p-2"
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     {isOpen ? <X size={28} /> : <Menu size={28} />}
                 </button>
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu Overlay */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden glass border-t border-white/10 bg-brand-900/95 backdrop-blur-xl"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-brand-900/98 backdrop-blur-2xl z-40 flex flex-col items-center justify-center"
                     >
-                        <div className="flex flex-col p-6 gap-4">
-                            {navLinks.map((link) => (
-                                <a
+                        <div className="flex flex-col items-center gap-8">
+                            {navLinks.map((link, index) => (
+                                <motion.a
                                     key={link.name}
                                     href={link.path}
-                                    className={`text-gray-300 hover:text-brand-neon text-lg ${activeSection === link.path.substring(1) ? 'text-brand-neon' : ''}`}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        setIsOpen(false);
-                                        document.querySelector(link.path).scrollIntoView({
-                                            behavior: 'smooth'
-                                        });
-                                    }}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.1 * index }}
+                                    onClick={(e) => scrollToSection(e, link.path)}
+                                    className={`text-3xl font-display font-medium ${activeSection === link.path.substring(1) ? 'text-brand-neon' : 'text-white/60'
+                                        }`}
                                 >
                                     {link.name}
-                                </a>
+                                </motion.a>
                             ))}
-                            <div className="h-px bg-white/10 w-full my-2"></div>
-                            <button className="w-full py-3 rounded-lg bg-brand-neon text-white font-medium shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                                Get Started
-                            </button>
+                            <motion.button
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="mt-8 px-8 py-4 bg-brand-neon text-white rounded-full font-bold text-lg shadow-[0_0_30px_rgba(59,130,246,0.4)]"
+                            >
+                                Start Your Project
+                            </motion.button>
                         </div>
                     </motion.div>
                 )}

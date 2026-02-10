@@ -1,6 +1,4 @@
 import React from 'react';
-
-import { AnimatePresence } from 'framer-motion';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -9,6 +7,7 @@ import Services from './sections/Services';
 import Team from './sections/Team';
 import Contact from './sections/Contact';
 import CustomCursor from './components/ui/CustomCursor';
+import SmoothScroll from './components/SmoothScroll';
 
 function App() {
   const { scrollYProgress } = useScroll();
@@ -18,30 +17,21 @@ function App() {
     restDelta: 0.001
   });
 
-
-
   return (
-    <div className="bg-brand-800 min-h-screen text-white overflow-x-hidden cursor-none flex flex-col">
+    <div className="bg-brand-900 min-h-screen text-white overflow-x-hidden cursor-none flex flex-col selection:bg-brand-neon selection:text-white">
+      <SmoothScroll />
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-brand-neon origin-left z-[100]"
+        className="fixed top-0 left-0 right-0 h-0.5 bg-brand-neon origin-left z-[100] shadow-[0_0_10px_rgba(59,130,246,0.5)]"
         style={{ scaleX }}
       />
       <CustomCursor />
       <Navbar />
 
-      <main className="flex flex-col">
-        <div id="home">
-          <Hero />
-        </div>
-        <div id="services">
-          <Services />
-        </div>
-        <div id="team">
-          <Team />
-        </div>
-        <div id="contact">
-          <Contact />
-        </div>
+      <main className="flex flex-col relative z-0">
+        <Hero />
+        <Services />
+        <Team />
+        <Contact />
         <Footer />
       </main>
     </div>

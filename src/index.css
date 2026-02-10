@@ -1,26 +1,45 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-900: #050505;
-  --color-brand-800: #0a0a0a;
-  --color-brand-700: #1a1a1a;
-  --color-brand-neon: #3b82f6;
-  --color-brand-purple: #8b5cf6;
-  --color-brand-secondary: #1a1a1a;
+  --color-brand-900: #030303;
+  --color-brand-800: #0A0A0A;
+  --color-brand-700: #121212;
+  --color-brand-neon: #3B82F6;
+  --color-brand-purple: #8B5CF6;
+  --color-brand-secondary: #0A0A0A;
 
   --font-sans: 'Outfit', 'sans-serif';
   --font-display: 'Space Grotesk', 'sans-serif';
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
   }
 
   body {
-    background-color: var(--color-brand-800);
-    color: white;
+    background-color: var(--color-brand-900);
+    color: #EDEDED;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
   h1,
@@ -30,6 +49,11 @@
   h5,
   h6 {
     font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    letter-spacing: -0.01em;
   }
 }
 
@@ -42,44 +66,68 @@
     transform-style: preserve-3d;
   }
 
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
   .bg-grid-white {
     background-size: 40px 40px;
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: var(--color-brand-900);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #222;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #333;
 }
 
 /* Glassmorphism Utilities */
 .glass {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(10, 10, 10, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.glass-hover {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
+.glass-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.glass-hover:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+/* Animation Utilities */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
