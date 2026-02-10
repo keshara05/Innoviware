@@ -44,7 +44,7 @@ const Footer = () => {
                         <ul className="space-y-3 text-gray-400">
                             <li>No 215 Hungamalagama</li>
                             <li>Dehiattakandiya, TC 32150</li>
-                            <li>hello@innoviware.com</li>
+                            <li>innoviware41@gmail.com</li>
                             <li>+ 94 775247113</li>
                         </ul>
                     </div>

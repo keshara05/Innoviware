@@ -52,7 +52,7 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <h4 className="text-lg font-bold mb-1">Email Us</h4>
-                                        <p className="text-gray-400 group-hover:text-brand-neon transition-colors">hello@innoviware.com</p>
+                                        <p className="text-gray-400 group-hover:text-brand-neon transition-colors">innoviware41@gmail.com</p>
                                         <p className="text-gray-500 text-sm">Response within 24 hours</p>
                                     </div>
                                 </div>
