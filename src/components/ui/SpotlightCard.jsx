@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
 
-const SpotlightCard = ({ children, className = "" }) => {
+const SpotlightCard = ({ children, className = "", spotlightColor = "rgba(59, 130, 246, 0.4)" }) => {
     const divRef = useRef(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [opacity, setOpacity] = useState(0);
@@ -43,21 +42,16 @@ const SpotlightCard = ({ children, className = "" }) => {
                 className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
                 style={{
                     opacity,
-                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(59, 130, 246, 0.15), transparent 40%)`,
+                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor.replace('0.4', '0.15')}, transparent 40%)`,
                 }}
             />
             <div
                 className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
                 style={{
                     opacity,
-                    background: `radial-gradient(400px circle at ${position.x}px ${position.y}px, rgba(59, 130, 246, 0.4), transparent 40%)`,
-                    maskImage: `radial-gradient(300px circle at ${position.x}px ${position.y}px, black, transparent)`,
-                    WebkitMaskImage: `radial-gradient(300px circle at ${position.x}px ${position.y}px, black, transparent)`,
+                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
                 }}
-            >
-                <div className="absolute inset-0 border border-brand-neon/50 rounded-2xl pointer-events-none"></div>
-            </div>
-
+            />
             <div className="relative h-full">{children}</div>
         </div>
     );

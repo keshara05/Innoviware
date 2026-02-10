@@ -48,9 +48,27 @@ const Contact = () => {
     return (
         <section id="contact" className="py-32 relative overflow-hidden">
             {/* Background Elements */}
-            <div className="absolute -left-[20%] top-[20%] w-[600px] h-[600px] bg-brand-neon/5 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute -right-[20%] bottom-[20%] w-[600px] h-[600px] bg-brand-purple/5 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay pointer-events-none"></div>
+            <motion.div
+                animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.5, 0.3],
+                    x: [0, 50, 0],
+                    y: [0, -50, 0]
+                }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                className="absolute -left-[20%] top-[20%] w-[600px] h-[600px] bg-brand-neon/10 rounded-full blur-[120px] pointer-events-none -z-10"
+            />
+            <motion.div
+                animate={{
+                    scale: [1, 1.1, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                    x: [0, -30, 0],
+                    y: [0, 50, 0]
+                }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear", delay: 2 }}
+                className="absolute -right-[20%] bottom-[20%] w-[600px] h-[600px] bg-color-neon-purple/10 rounded-full blur-[120px] pointer-events-none -z-10"
+            />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150 mix-blend-overlay pointer-events-none"></div>
 
             <div className="container mx-auto px-6 relative z-10">
                 <motion.div

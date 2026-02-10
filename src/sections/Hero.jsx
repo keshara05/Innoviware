@@ -1,149 +1,240 @@
-import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Sparkles, Zap, Shield } from 'lucide-react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { ArrowRight, Sparkles, Zap, Shield, Play } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ParallaxText from '../components/ui/ParallaxText';
 
 const Hero = () => {
     const { scrollY } = useScroll();
-    const y1 = useTransform(scrollY, [0, 500], [0, 100]);
-    const y2 = useTransform(scrollY, [0, 500], [0, -100]);
+    const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+    const y2 = useTransform(scrollY, [0, 500], [0, -150]);
     const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
+    // Mouse move effect for 3D card
+    const cardRef = useRef(null);
+    const useMouseParallax = (stiffness = 300, damping = 30) => {
+        const x = useSpring(0, { stiffness, damping });
+        const y = useSpring(0, { stiffness, damping });
+
+        const handleMouseMove = (e) => {
+            const rect = cardRef.current?.getBoundingClientRect();
+            if (rect) {
+                const width = rect.width;
+                const height = rect.height;
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                const xPct = mouseX / width - 0.5;
+                const yPct = mouseY / height - 0.5;
+                x.set(xPct * 20);
+                y.set(yPct * 20);
+            }
+        }
+
+        const handleMouseLeave = () => {
+            x.set(0);
+            y.set(0);
+        }
+
+        return { x, y, handleMouseMove, handleMouseLeave };
+    };
+
+    const { x: rotateY, y: rotateX, handleMouseMove, handleMouseLeave } = useMouseParallax();
+
     return (
-        <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden py-20 pt-32">
-            {/* Cinematic Background */}
-            <div className="absolute inset-0 w-full h-full bg-brand-900 z-0">
-                {/* Animated Gradient Orbs */}
+        <section
+            id="home"
+            className="relative min-h-screen flex items-center justify-center overflow-hidden py-20 pt-32"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+        >
+            {/* Cinematic Background - Aurora Borealis Style */}
+            <div className="absolute inset-0 w-full h-full bg-[#030303] z-0 overflow-hidden">
+                {/* Aurora Layers */}
+                <motion.div
+                    animate={{
+                        opacity: [0.4, 0.6, 0.4],
+                        scale: [1, 1.2, 1],
+                        rotate: [0, 10, 0],
+                    }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                    className="absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] bg-gradient-to-r from-brand-neon/20 via-color-neon-purple/20 to-transparent rounded-full blur-[120px] mix-blend-screen"
+                />
                 <motion.div
                     animate={{
                         opacity: [0.3, 0.5, 0.3],
-                        scale: [1, 1.1, 1],
+                        scale: [1.2, 1, 1.2],
+                        rotate: [0, -15, 0],
                     }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-brand-neon/20 rounded-full blur-[120px]"
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-gradient-to-l from-color-hot-pink/15 via-color-cyber-blue/15 to-transparent rounded-full blur-[120px] mix-blend-screen"
                 />
                 <motion.div
                     animate={{
-                        opacity: [0.2, 0.4, 0.2],
-                        scale: [1, 1.2, 1],
+                        x: [-50, 50, -50],
+                        y: [-20, 20, -20],
                     }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-purple/20 rounded-full blur-[100px]"
+                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-[30%] left-[20%] w-[40vw] h-[40vw] bg-color-acid-lime/5 rounded-full blur-[100px] mix-blend-screen"
                 />
 
                 {/* Grid */}
-                <div className="absolute inset-0 bg-grid-white/[0.03] bg-[length:60px_60px]" />
+                <div className="absolute inset-0 bg-grid-white/[0.02] bg-[length:60px_60px]" />
 
                 {/* Noise Texture */}
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
 
-                {/* Fade Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-brand-900/0 via-brand-900/50 to-brand-900" />
+                {/* Vignette */}
+                <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#030303]/50 to-[#030303]" />
             </div>
 
-            <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+            <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
                 {/* Content */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="max-w-3xl"
                 >
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-neon/20 bg-brand-neon/5 text-brand-neon text-sm font-medium mb-6 backdrop-blur-sm"
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: "auto" }}
+                        transition={{ delay: 0.2, duration: 0.5 }}
+                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium mb-8 backdrop-blur-md overflow-hidden whitespace-nowrap"
                     >
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-neon opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-neon"></span>
                         </span>
-                        Next-Gen Software Solutions
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
+                            Pioneering the Digital Frontier
+                        </span>
                     </motion.div>
 
-                    <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] mb-6 tracking-tight font-display">
-                        We Build <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-neon to-brand-purple animate-gradient-x bg-300%">Digital Future</span>
+                    <h1 className="text-6xl md:text-8xl font-bold leading-[0.95] mb-8 tracking-tighter font-display">
+                        WE CRAFT <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-neon to-color-neon-purple animate-gradient-x bg-300% pb-2">
+                            DIGITAL REALITY
+                        </span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-gray-400 mb-8 max-w-lg leading-relaxed font-light">
-                        Transforming ideas into powerful, scalable, and beautiful software experiences. We engineer clarity out of complexity.
+                    <p className="text-xl text-gray-400 mb-10 max-w-lg leading-relaxed font-light border-l-2 border-white/10 pl-6">
+                        Merging art and engineering to build software that defines the future.
+                        Scalable, secure, and stunningly beautiful.
                     </p>
 
                     <div className="flex flex-wrap gap-4">
-                        <Button variant="primary" className="h-12 px-8 text-base shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)]">
-                            View Our Work
+                        <Button
+                            variant="primary"
+                            className="h-14 px-10 text-lg shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)] hover:shadow-[0_0_60px_-15px_rgba(59,130,246,0.7)] group relative overflow-hidden"
+                        >
+                            <span className="relative z-10">Start Building</span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-brand-neon to-color-neon-purple opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </Button>
-                        <button className="h-12 px-8 rounded-xl border border-white/10 hover:bg-white/5 transition-colors text-white font-medium">
-                            Contact Sales
+
+                        <button className="h-14 px-10 rounded-xl border border-white/10 hover:bg-white/5 transition-all text-white font-medium flex items-center gap-3 group">
+                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                                <Play size={14} className="fill-white" />
+                            </div>
+                            <span>Showreel</span>
                         </button>
                     </div>
 
-                    <div className="mt-12 flex items-center gap-8 text-gray-500 text-sm font-mono">
-                        <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                            Available for new projects
+                    <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-8 border-t border-white/5 pt-8">
+                        <div>
+                            <h4 className="text-3xl font-bold text-white mb-1">98%</h4>
+                            <p className="text-sm text-gray-500 uppercase tracking-wider">Client Satisfaction</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple"></div>
-                            Global Reach
+                        <div>
+                            <h4 className="text-3xl font-bold text-white mb-1">50+</h4>
+                            <p className="text-sm text-gray-500 uppercase tracking-wider">Projects Launched</p>
+                        </div>
+                        <div className="hidden md:block">
+                            <h4 className="text-3xl font-bold text-white mb-1">24/7</h4>
+                            <p className="text-sm text-gray-500 uppercase tracking-wider">Expert Support</p>
                         </div>
                     </div>
                 </motion.div>
 
                 {/* 3D Visual */}
-                <div className="relative h-[600px] perspective-1000 hidden lg:block">
+                <div className="relative h-[600px] perspective-1000 hidden lg:block" ref={cardRef}>
                     <motion.div
-                        style={{ y: y1, rotateX: 5, rotateY: -10 }}
-                        className="relative w-full h-full transform-style-3d will-change-transform"
+                        style={{ y: y1, rotateX, rotateY }}
+                        className="relative w-full h-full transform-style-3d will-change-transform transition-transform duration-100 ease-out"
                     >
-                        {/* Main Floating Card */}
-                        <motion.div
-                            animate={{ y: [0, -20, 0] }}
-                            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-[10%] left-[10%] right-[10%] aspect-video bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl p-6 overflow-hidden group"
-                        >
-                            {/* Inner UI Mockup */}
-                            <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-4">
-                                <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
-                                <div className="ml-4 h-2 w-32 bg-white/10 rounded-full"></div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-6 h-full">
-                                <div className="col-span-1 bg-white/5 rounded-xl animate-pulse"></div>
-                                <div className="col-span-2 space-y-4">
-                                    <div className="h-8 w-3/4 bg-brand-neon/20 rounded-lg"></div>
-                                    <div className="h-4 w-full bg-white/5 rounded-lg"></div>
-                                    <div className="h-4 w-5/6 bg-white/5 rounded-lg"></div>
-                                    <div className="h-32 w-full bg-gradient-to-br from-brand-purple/10 to-transparent rounded-xl border border-white/5 mt-4"></div>
+                        {/* Main Holographic Card */}
+                        <div className="absolute top-[10%] left-[10%] right-[10%] aspect-[16/10] bg-[#0A0A0A]/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden group">
+                            {/* Gradient Border Overlay */}
+                            <div className="absolute inset-0 rounded-3xl p-[1px] bg-gradient-to-br from-white/20 via-transparent to-white/5 mask-image-source" />
+
+                            {/* Inner Content */}
+                            <div className="relative h-full w-full p-8 flex flex-col">
+                                {/* Header */}
+                                <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-6">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                                        <div className="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                                        <div className="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <div className="h-2 w-20 bg-white/10 rounded-full"></div>
+                                        <div className="h-2 w-10 bg-white/5 rounded-full"></div>
+                                    </div>
+                                </div>
+
+                                {/* Main UI Area */}
+                                <div className="flex-1 grid grid-cols-12 gap-6">
+                                    <div className="col-span-3 space-y-3">
+                                        {[1, 2, 3, 4].map((i) => (
+                                            <div key={i} className="h-2 w-full bg-white/5 rounded-full" />
+                                        ))}
+                                        <div className="mt-8 h-20 w-full bg-gradient-to-b from-white/5 to-transparent rounded-xl" />
+                                    </div>
+                                    <div className="col-span-9 bg-[#050505] rounded-xl border border-white/5 p-4 relative overflow-hidden">
+                                        {/* Chart/Graph Simulation */}
+                                        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-brand-neon/20 to-transparent" />
+                                        <svg className="w-full h-full absolute inset-0 text-brand-neon" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                            <path d="M0,80 Q25,50 50,70 T100,40 V100 H0 Z" fill="currentColor" fillOpacity="0.1" />
+                                            <path d="M0,80 Q25,50 50,70 T100,40" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                                        </svg>
+
+                                        {/* Floating UI Elements */}
+                                        <motion.div
+                                            animate={{ y: [0, -10, 0] }}
+                                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                            className="absolute top-4 right-4 bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/10"
+                                        >
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-brand-neon to-color-neon-purple" />
+                                        </motion.div>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Reflection */}
-                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent skew-x-12 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000"></div>
-                        </motion.div>
+                            {/* Glass Reflection */}
+                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                        </div>
 
-                        {/* Floating Feature Icons */}
+                        {/* Floating 3D Icons */}
                         <motion.div
-                            animate={{ y: [0, 30, 0], x: [0, 10, 0] }}
-                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                            className="absolute -right-8 top-[30%] p-4 bg-brand-900/60 backdrop-blur-xl border border-brand-neon/30 rounded-2xl shadow-lg"
+                            animate={{ y: [0, 40, 0], x: [0, 10, 0], rotate: [0, 10, 0] }}
+                            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                            className="absolute -right-4 top-[20%] p-5 bg-[#1a1a1a]/80 backdrop-blur-xl border border-brand-neon/30 rounded-2xl shadow-[0_0_30px_rgba(59,130,246,0.3)] transform-style-3d"
                         >
-                            <Sparkles className="text-brand-neon w-8 h-8" />
+                            <Sparkles className="text-brand-neon w-10 h-10 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
                         </motion.div>
 
                         <motion.div
-                            animate={{ y: [0, -25, 0], x: [0, -5, 0] }}
+                            animate={{ y: [0, -30, 0], x: [0, -10, 0], rotate: [0, -5, 0] }}
                             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                            className="absolute -left-8 bottom-[30%] p-4 bg-brand-900/60 backdrop-blur-xl border border-brand-purple/30 rounded-2xl shadow-lg"
+                            className="absolute -left-6 bottom-[25%] p-5 bg-[#1a1a1a]/80 backdrop-blur-xl border border-color-neon-purple/30 rounded-2xl shadow-[0_0_30px_rgba(124,58,237,0.3)] transform-style-3d"
                         >
-                            <Zap className="text-brand-purple w-8 h-8" />
+                            <Zap className="text-color-neon-purple w-10 h-10 drop-shadow-[0_0_10px_rgba(124,58,237,0.8)]" />
                         </motion.div>
 
-                        {/* Background Glow */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-brand-neon/20 to-brand-purple/20 rounded-full blur-[80px] -z-10 transform scale-75"></div>
+                        <motion.div
+                            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute -z-10 top-1/2 left-1/2 w-[120%] h-[120%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-brand-neon/10 to-color-neon-purple/10 blur-[80px] rounded-full"
+                        />
                     </motion.div>
                 </div>
             </div>
